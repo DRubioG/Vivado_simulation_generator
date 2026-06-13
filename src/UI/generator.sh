@@ -1,0 +1,1 @@
+pyside6-uic interface.ui > interface_ui.py
