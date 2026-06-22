@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'interface.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.2
+## Created by: Qt User Interface Compiler version 6.11.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -39,9 +39,11 @@ class Ui_MainWindow(object):
         self.lineEdit_JSON = QLineEdit(self.groupBox)
         self.lineEdit_JSON.setObjectName(u"lineEdit_JSON")
         self.lineEdit_JSON.setGeometry(QRect(70, 30, 113, 25))
+        self.lineEdit_JSON.setReadOnly(True)
         self.lineEdit_XCI = QLineEdit(self.groupBox)
         self.lineEdit_XCI.setObjectName(u"lineEdit_XCI")
         self.lineEdit_XCI.setGeometry(QRect(70, 60, 113, 25))
+        self.lineEdit_XCI.setReadOnly(True)
         self.pushButton_Search_JSON = QPushButton(self.groupBox)
         self.pushButton_Search_JSON.setObjectName(u"pushButton_Search_JSON")
         self.pushButton_Search_JSON.setGeometry(QRect(190, 30, 80, 25))
@@ -78,7 +80,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 317, 22))
+        self.menubar.setGeometry(QRect(0, 0, 317, 21))
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")

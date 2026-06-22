@@ -1,11 +1,17 @@
-from PySide6.QtWidgets import QMainWindow, QFileDialog
+from PySide6.QtWidgets import QMainWindow, QFileDialog, QApplication
 from UI.interface_ui import Ui_MainWindow
 import json
 from simulator.simulator_generator import *
 
 class interfaz_gui(QMainWindow):
+    """Class that controlles the interface.
+
+    Args:
+        QMainWindow (Class): class that depends the interface.
+    """
     def __init__(self):
-        
+        """Constructor of the class
+        """
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
@@ -17,9 +23,18 @@ class interfaz_gui(QMainWindow):
 
 
     def init(self):
-        pass
+        """Start method of the GUI.
+        """
+        self.json_option = True
+        self.ui.pushButton_Search_XCI.setEnabled(False)
+        self.ui.pushButton_Search_JSON.setEnabled(True)
+        self.ui.radioButton_JSON.setChecked(True)
+        self.ui.lineEdit_JSON.setEnabled(True)
+        self.ui.lineEdit_XCI.setEnabled(False)
 
     def interconnection(self):
+        """Method that connects the interface with Python.
+        """
         self.ui.pushButton_cancel.pressed.connect(self.clicButton_Cancel)
         self.ui.pushButton_generate.pressed.connect(self.clicButton_Generate)
         self.ui.pushButton_output_path.pressed.connect(self.clicButton_SearchOutputFiles)
@@ -32,6 +47,8 @@ class interfaz_gui(QMainWindow):
 
 
     def clicButton_SearchJSON(self):
+        """Method to search JSONs files with the basic information of the IP.
+        """
         self.path, _ = QFileDialog.getOpenFileName(
             self,
             "Search Files",
@@ -39,32 +56,69 @@ class interfaz_gui(QMainWindow):
             "JSON (*.json)"
         )
 
+        # Set the path in the GUI and remove the other
         self.ui.lineEdit_JSON.setText(self.path)
+        self.ui.lineEdit_XCI.clear()
         
 
         
 
 
     def clicButton_SearchXCI(self):
-        pass
+        """Method to search XCI files with the IP.
+        """
+        self.path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Search Files",
+            "",
+            "XCI (*.xci)"
+        )
+
+        # Set the path in the GUI and remove the other
+        self.ui.lineEdit_XCI.setText(self.path)
+        self.ui.lineEdit_JSON.clear()
+
+
 
     def clicButton_SearchOutputFiles(self):
+        """Method to select the path.
+        """
         pass
 
     def clicButton_Generate(self):
+        """Method to generate the files.
+        """
         if self.path:
             with open(self.path, "r", encoding="utf-8") as f:
                 data = json.load(f)
                 self._sim.simulator_generator(json_file=data)
 
     def clicButton_Cancel(self):
-        pass
+        """Callback of the Cancel button.
+        """
+        QApplication.quit()
+        
 
     def clicButton_simFolder(self):
+        """_summary_
+        """
         pass
 
     def clicButton_Readme(self):
         pass
 
     def clicButton_JSON_XCI(self):
-        pass
+        """Callback to select which is the option JSON or XCI.
+        """
+        self.json_option = not self.json_option
+        if self.json_option == True:
+            self.ui.pushButton_Search_XCI.setEnabled(False)
+            self.ui.pushButton_Search_JSON.setEnabled(True)
+            self.ui.lineEdit_JSON.setEnabled(True)
+            self.ui.lineEdit_XCI.setEnabled(False)
+        else:
+            self.ui.pushButton_Search_XCI.setEnabled(True)
+            self.ui.pushButton_Search_JSON.setEnabled(False)
+            self.ui.lineEdit_JSON.setEnabled(False)
+            self.ui.lineEdit_XCI.setEnabled(True)
+

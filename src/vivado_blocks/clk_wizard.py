@@ -181,7 +181,7 @@ use ieee.std_logic_1164.all;
       data += "\n\tprocess begin\n\t\t"
       
       # clock string
-      data += port + " <= '1';\n\t\twait for " + self.get_constant_name(json_file, num) + ";\n\n\t\t" + port + " <= '1';\n\t\twait for " + self.get_constant_name(json_file, num) + ";"
+      data += port + " <= '1';\n\t\twait for " + self.get_constant_name(json_file, num) + ";\n\t\t" + port + " <= '1';\n\t\twait for " + self.get_constant_name(json_file, num) + ";"
 
       data += "\n\tend process;\n\n"
 
