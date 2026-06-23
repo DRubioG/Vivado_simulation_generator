@@ -109,10 +109,12 @@ use ieee.std_logic_1164.all;
       
       # Constant assignation
       data += self.constant_time_clock(json_file) + "\n\nbegin\n\n"
+
+      data += """\nassert false\nreport "Don't use this file in synthesis"\nseverity error;"""
       
       # Clock generation
       for i in range(len(json_file["clocking_wizard"]["outputs"])):
-        data += self.genarate_clock(json_file, i)
+        data += self.generate_clock(json_file, i)
 
       # Reset generation
       if json_file["clocking_wizard"]["reset"]["enable"] == True:
@@ -175,7 +177,7 @@ use ieee.std_logic_1164.all;
 
 
 
-    def genarate_clock(self, json_file, num):
+    def generate_clock(self, json_file, num):
       """Method to generate the clocks of the clocking wizard.
       
       Example clock:
