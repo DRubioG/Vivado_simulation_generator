@@ -1,4 +1,5 @@
 from vivado_blocks.clk_wizard import *
+import os
 
 
 class simulator_generator:
@@ -8,15 +9,17 @@ class simulator_generator:
         """Constructor of the class.
         """
         self.clk_wiz = clk_wizard()
+        self.sim_folder = True
         pass
 
 
-    def simulator_generator(self, json_file):
+    def simulator_generator(self, json_file, sim_folder = True):
         """This method selects which IP block is used.
 
         Args:
             json_file (array): array with the JSON data.
         """
+        self.sim_folder = sim_folder
         if "clocking_wizard" in json_file:
             self.generate_clocking_wizard(json_file)
 
@@ -29,7 +32,12 @@ class simulator_generator:
             json_file (array): array wuth the JSON data.
         """
         name = json_file["clocking_wizard"]["name"]
-        file = open(name+".vhd", "w")
+        if self.sim_folder:
+            os.makedirs("sim", exist_ok=True)
+            file = open("sim/"+name+".vhd", "w")
+        else:
+            file = open(name+".vhd", "w")
+
         clock_wizard_data = self.clk_wiz.generate_clock_file(json_file)
         file.write(clock_wizard_data) 
         file.close()

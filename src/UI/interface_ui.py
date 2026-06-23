@@ -20,12 +20,12 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QGroupBox, QLabel,
     QRadioButton, QSizePolicy, QStatusBar, QTextEdit,
     QWidget)
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        if not MainWindow.objectName():
-            MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(317, 579)
-        self.centralwidget = QWidget(MainWindow)
+class Ui_SimulatorGenerator(object):
+    def setupUi(self, SimulatorGenerator):
+        if not SimulatorGenerator.objectName():
+            SimulatorGenerator.setObjectName(u"SimulatorGenerator")
+        SimulatorGenerator.resize(317, 579)
+        self.centralwidget = QWidget(SimulatorGenerator)
         self.centralwidget.setObjectName(u"centralwidget")
         self.groupBox = QGroupBox(self.centralwidget)
         self.groupBox.setObjectName(u"groupBox")
@@ -56,6 +56,7 @@ class Ui_MainWindow(object):
         self.lineEdit_output_path = QLineEdit(self.centralwidget)
         self.lineEdit_output_path.setObjectName(u"lineEdit_output_path")
         self.lineEdit_output_path.setGeometry(QRect(32, 390, 161, 25))
+        self.lineEdit_output_path.setReadOnly(True)
         self.label = QLabel(self.centralwidget)
         self.label.setObjectName(u"label")
         self.label.setGeometry(QRect(30, 370, 91, 17))
@@ -65,6 +66,7 @@ class Ui_MainWindow(object):
         self.textEdit_Files = QTextEdit(self.centralwidget)
         self.textEdit_Files.setObjectName(u"textEdit_Files")
         self.textEdit_Files.setGeometry(QRect(30, 230, 251, 111))
+        self.textEdit_Files.setReadOnly(True)
         self.label_2 = QLabel(self.centralwidget)
         self.label_2.setObjectName(u"label_2")
         self.label_2.setGeometry(QRect(30, 210, 111, 17))
@@ -77,33 +79,33 @@ class Ui_MainWindow(object):
         self.checkBox_sim_folder = QCheckBox(self.centralwidget)
         self.checkBox_sim_folder.setObjectName(u"checkBox_sim_folder")
         self.checkBox_sim_folder.setGeometry(QRect(20, 420, 301, 23))
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QMenuBar(MainWindow)
+        SimulatorGenerator.setCentralWidget(self.centralwidget)
+        self.menubar = QMenuBar(SimulatorGenerator)
         self.menubar.setObjectName(u"menubar")
         self.menubar.setGeometry(QRect(0, 0, 317, 21))
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QStatusBar(MainWindow)
+        SimulatorGenerator.setMenuBar(self.menubar)
+        self.statusbar = QStatusBar(SimulatorGenerator)
         self.statusbar.setObjectName(u"statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+        SimulatorGenerator.setStatusBar(self.statusbar)
 
-        self.retranslateUi(MainWindow)
+        self.retranslateUi(SimulatorGenerator)
 
-        QMetaObject.connectSlotsByName(MainWindow)
+        QMetaObject.connectSlotsByName(SimulatorGenerator)
     # setupUi
 
-    def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Vivado blocks", None))
-        self.radioButton_JSON.setText(QCoreApplication.translate("MainWindow", u"JSON", None))
-        self.radioButton_XCI.setText(QCoreApplication.translate("MainWindow", u"XCI", None))
-        self.pushButton_Search_JSON.setText(QCoreApplication.translate("MainWindow", u"Search", None))
-        self.pushButton_Search_XCI.setText(QCoreApplication.translate("MainWindow", u"Search", None))
-        self.pushButton_output_path.setText(QCoreApplication.translate("MainWindow", u"Search", None))
-        self.label.setText(QCoreApplication.translate("MainWindow", u"Output files", None))
-        self.checkBox_readme.setText(QCoreApplication.translate("MainWindow", u"Add README with simulation commands", None))
-        self.label_2.setText(QCoreApplication.translate("MainWindow", u"Files to generate", None))
-        self.pushButton_generate.setText(QCoreApplication.translate("MainWindow", u"Generate", None))
-        self.pushButton_cancel.setText(QCoreApplication.translate("MainWindow", u"Cancel", None))
-        self.checkBox_sim_folder.setText(QCoreApplication.translate("MainWindow", u"Create SIM folder", None))
+    def retranslateUi(self, SimulatorGenerator):
+        SimulatorGenerator.setWindowTitle(QCoreApplication.translate("SimulatorGenerator", u"Simulator Generator", None))
+        self.groupBox.setTitle(QCoreApplication.translate("SimulatorGenerator", u"Vivado blocks", None))
+        self.radioButton_JSON.setText(QCoreApplication.translate("SimulatorGenerator", u"JSON", None))
+        self.radioButton_XCI.setText(QCoreApplication.translate("SimulatorGenerator", u"XCI", None))
+        self.pushButton_Search_JSON.setText(QCoreApplication.translate("SimulatorGenerator", u"Search", None))
+        self.pushButton_Search_XCI.setText(QCoreApplication.translate("SimulatorGenerator", u"Search", None))
+        self.pushButton_output_path.setText(QCoreApplication.translate("SimulatorGenerator", u"Search", None))
+        self.label.setText(QCoreApplication.translate("SimulatorGenerator", u"Output files", None))
+        self.checkBox_readme.setText(QCoreApplication.translate("SimulatorGenerator", u"Add README with simulation commands", None))
+        self.label_2.setText(QCoreApplication.translate("SimulatorGenerator", u"Files to generate", None))
+        self.pushButton_generate.setText(QCoreApplication.translate("SimulatorGenerator", u"Generate", None))
+        self.pushButton_cancel.setText(QCoreApplication.translate("SimulatorGenerator", u"Cancel", None))
+        self.checkBox_sim_folder.setText(QCoreApplication.translate("SimulatorGenerator", u"Create SIM folder", None))
     # retranslateUi
 

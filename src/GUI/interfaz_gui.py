@@ -1,5 +1,5 @@
-from PySide6.QtWidgets import QMainWindow, QFileDialog, QApplication
-from UI.interface_ui import Ui_MainWindow
+from PySide6.QtWidgets import QMainWindow, QFileDialog, QApplication, QStatusBar
+from UI.interface_ui import Ui_SimulatorGenerator
 import json
 from simulator.simulator_generator import *
 
@@ -10,10 +10,10 @@ class interfaz_gui(QMainWindow):
         QMainWindow (Class): class that depends the interface.
     """
     def __init__(self):
-        """Constructor of the class
+        """Class constructor
         """
         super().__init__()
-        self.ui = Ui_MainWindow()
+        self.ui = Ui_SimulatorGenerator()
         self.ui.setupUi(self)
         
         self.interconnection()
@@ -31,6 +31,14 @@ class interfaz_gui(QMainWindow):
         self.ui.radioButton_JSON.setChecked(True)
         self.ui.lineEdit_JSON.setEnabled(True)
         self.ui.lineEdit_XCI.setEnabled(False)
+        self.ui.checkBox_sim_folder.setChecked(True)
+        self.ui.checkBox_readme.setEnabled(False)
+
+        # Version
+        status_bar = QStatusBar()
+        status_bar.showMessage("Version: 0.1")
+        self.setStatusBar(status_bar)
+
 
     def interconnection(self):
         """Method that connects the interface with Python.
@@ -91,21 +99,15 @@ class interfaz_gui(QMainWindow):
         if self.path:
             with open(self.path, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                self._sim.simulator_generator(json_file=data)
+
+                sim_folder = self.ui.checkBox_sim_folder.isChecked()
+                self._sim.simulator_generator(json_file=data, sim_folder=sim_folder)
 
     def clicButton_Cancel(self):
         """Callback of the Cancel button.
         """
         QApplication.quit()
         
-
-    def clicButton_simFolder(self):
-        """_summary_
-        """
-        pass
-
-    def clicButton_Readme(self):
-        pass
 
     def clicButton_JSON_XCI(self):
         """Callback to select which is the option JSON or XCI.

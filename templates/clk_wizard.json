@@ -7,7 +7,7 @@
                 "frequency_mhz": 100,
                 "phase_deg": 0,
                 "duty_cycle": 50,
-                "differential": false
+                "differential": true
             },
             {
                 "name": "clk_in2",

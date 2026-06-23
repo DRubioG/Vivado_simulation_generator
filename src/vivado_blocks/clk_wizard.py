@@ -46,23 +46,41 @@ use ieee.std_logic_1164.all;
           string: string with the entity of the clocking wizard.
       """
 
-      data = "\n\nentity " + json_file["clocking_wizard"]["name"] + " is\n\tport (\n"
-
-      # inputs
-      for i in json_file["clocking_wizard"]["inputs"]:
-        data += "\t\t" + i["name"] + " : in std_logic;\n"
+      data = "\n\nentity " + json_file["clocking_wizard"]["name"] + " is\n\tport ("
 
       # outputs
+      data += "\n\t-- Clock out ports"
       for i in json_file["clocking_wizard"]["outputs"]:
-        data += "\t\t" + i["name"] + " : out std_logic;\n"
+        data += "\n\t\t" + i["name"] + " : out std_logic;"     
 
+
+      data += "\n\t-- Status and control signals"
       # reset
       if json_file["clocking_wizard"]["reset"]["enable"] == True:
         data += "\n\t\treset : out std_logic;"
 
       # lock
       if json_file["clocking_wizard"]["lock"]["enable"] == True:
-        data += "\n\t\tlocked : out std_logic"
+        data += "\n\t\tlocked : out std_logic;"
+
+      # inputs
+      data += "\n\t-- Clock in ports"
+      cont = 0
+      for i in json_file["clocking_wizard"]["inputs"]:
+        cont += 1
+
+      # differential input
+        if "differential" in i:
+          if i["differential"]:
+            data += self.generate_differential_port(i["name"])
+          else:
+            data += "\n\t\t" + i["name"] + " : in std_logic"
+        else:
+          data += "\n\t\t" + i["name"] + " : in std_logic"
+
+        if cont != len(json_file["clocking_wizard"]["inputs"]):
+          data += ";"
+
 
       data += "\n\t);\nend entity;\n"
           
@@ -70,6 +88,12 @@ use ieee.std_logic_1164.all;
       return data
     
 
+    def generate_differential_port(self, name):
+      
+      data = "\n\t\t" + name + "_p : in std_logic;"
+      data += "\n\t\t" + name + "_n : in std_logic"
+      
+      return data
 
 
     def generate_architecture(self, json_file):
@@ -214,7 +238,18 @@ use ieee.std_logic_1164.all;
 -- RESET
 ---------------------------------------------------------------- """
       # reset string
-      data += "\n\tprocess begin\n\t\treset <= '0';\n\t\twait for " + str(json_file["clocking_wizard"]["reset"]["reset_time_ns"]) + " ns;\n\t\treset <= '1';\n\t\twait;\n\tend process;\n\n"
+      if json_file["clocking_wizard"]["reset"]["active_low_reset"]:
+        reset_value = "\'0\'"
+        not_reset_value = "\'1\'"
+      else:
+        reset_value = "\'1\'"
+        not_reset_value = "\'0\'"
+
+      # Data generator
+      data += "\n\tprocess begin\n\t\treset <= "+ reset_value + ";"
+      data += "\n\t\twait for " + str(json_file["clocking_wizard"]["reset"]["reset_time_ns"]) + " ns;"
+      data += "\n\t\treset <= " + not_reset_value+ ";\n\t\twait;"
+      data += "\n\tend process;\n\n"
       
       # Return data
       return data
