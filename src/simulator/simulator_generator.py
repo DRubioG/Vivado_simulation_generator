@@ -1,4 +1,5 @@
 from vivado_blocks.clk_wizard import *
+from vivado_blocks.ila import *
 import os
 
 
@@ -9,6 +10,7 @@ class simulator_generator:
         """Constructor of the class.
         """
         self.clk_wiz = clk_wizard()
+        self.ila = ila()
         self.sim_folder = True
         pass
 
@@ -20,8 +22,10 @@ class simulator_generator:
             json_file (array): array with the JSON data.
         """
         self.sim_folder = sim_folder
-        if "clocking_wizard" in json_file:
+        if json_file["ip_inst"]["component_reference"].find("clk_wiz") != -1:
             self.generate_clocking_wizard(json_file)
+        elif json_file["ip_inst"]["component_reference"].find("ila") != -1:
+            self.generate_ila(json_file)
 
 
 
@@ -31,7 +35,7 @@ class simulator_generator:
         Args:
             json_file (array): array wuth the JSON data.
         """
-        name = json_file["clocking_wizard"]["name"]
+        name = json_file["ip_inst"]["xci_name"]
         if self.sim_folder:
             os.makedirs("sim", exist_ok=True)
             file = open("sim/"+name+".vhd", "w")
@@ -47,6 +51,23 @@ class simulator_generator:
 
 
 # Ila
+
+    def generate_ila(self, json_file):
+        """This method generates the ila simulation file
+
+        Args:
+            json_file (array): array with the jSON data.
+        """
+        name = json_file["ip_inst"]["xci_name"]
+        if self.sim_folder:
+            os.makedirs("sim", exist_ok=True)
+            file = open("sim/"+name+".vhd", "w")
+        else:
+            file = open(name+".vhd", "w")
+
+        ila_data = self.ila.generate_ila_file(json_file)
+        file.write(ila_data) 
+        file.close()
 
 
 

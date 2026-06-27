@@ -20,82 +20,30 @@
       <x>20</x>
       <y>60</y>
       <width>281</width>
-      <height>101</height>
+      <height>81</height>
      </rect>
     </property>
     <property name="title">
-     <string>Vivado blocks</string>
+     <string>XCI folder</string>
     </property>
-    <widget class="QRadioButton" name="radioButton_JSON">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>30</y>
-       <width>100</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>JSON</string>
-     </property>
-    </widget>
-    <widget class="QRadioButton" name="radioButton_XCI">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>60</y>
-       <width>100</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>XCI</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="lineEdit_JSON">
-     <property name="geometry">
-      <rect>
-       <x>70</x>
-       <y>30</y>
-       <width>113</width>
-       <height>25</height>
-      </rect>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
     <widget class="QLineEdit" name="lineEdit_XCI">
      <property name="geometry">
       <rect>
        <x>70</x>
-       <y>60</y>
+       <y>40</y>
        <width>113</width>
        <height>25</height>
       </rect>
      </property>
      <property name="readOnly">
       <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_Search_JSON">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>30</y>
-       <width>80</width>
-       <height>25</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Search</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_Search_XCI">
      <property name="geometry">
       <rect>
        <x>190</x>
-       <y>60</y>
+       <y>40</y>
        <width>80</width>
        <height>25</height>
       </rect>
@@ -141,7 +89,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Output files</string>
+     <string>Output path</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="checkBox_readme">

@@ -14,6 +14,7 @@ class interfaz_gui(QMainWindow):
         """
         super().__init__()
         self.ui = Ui_SimulatorGenerator()
+        ()
         self.ui.setupUi(self)
         
         self.interconnection()
@@ -25,12 +26,7 @@ class interfaz_gui(QMainWindow):
     def init(self):
         """Start method of the GUI.
         """
-        self.json_option = True
-        self.ui.pushButton_Search_XCI.setEnabled(False)
-        self.ui.pushButton_Search_JSON.setEnabled(True)
-        self.ui.radioButton_JSON.setChecked(True)
-        self.ui.lineEdit_JSON.setEnabled(True)
-        self.ui.lineEdit_XCI.setEnabled(False)
+        
         self.ui.checkBox_sim_folder.setChecked(True)
         self.ui.checkBox_readme.setEnabled(False)
 
@@ -46,27 +42,11 @@ class interfaz_gui(QMainWindow):
         self.ui.pushButton_cancel.pressed.connect(self.clicButton_Cancel)
         self.ui.pushButton_generate.pressed.connect(self.clicButton_Generate)
         self.ui.pushButton_output_path.pressed.connect(self.clicButton_SearchOutputFiles)
-        self.ui.radioButton_XCI.pressed.connect(self.clicButton_JSON_XCI)
-        self.ui.radioButton_JSON.pressed.connect(self.clicButton_JSON_XCI)
-        self.ui.pushButton_Search_JSON.pressed.connect(self.clicButton_SearchJSON)
         self.ui.pushButton_Search_XCI.pressed.connect(self.clicButton_SearchXCI)
 
 
 
 
-    def clicButton_SearchJSON(self):
-        """Method to search JSONs files with the basic information of the IP.
-        """
-        self.path, _ = QFileDialog.getOpenFileName(
-            self,
-            "Search Files",
-            "",
-            "JSON (*.json)"
-        )
-
-        # Set the path in the GUI and remove the other
-        self.ui.lineEdit_JSON.setText(self.path)
-        self.ui.lineEdit_XCI.clear()
         
 
         
@@ -84,7 +64,6 @@ class interfaz_gui(QMainWindow):
 
         # Set the path in the GUI and remove the other
         self.ui.lineEdit_XCI.setText(self.path)
-        self.ui.lineEdit_JSON.clear()
 
 
 
@@ -108,19 +87,4 @@ class interfaz_gui(QMainWindow):
         """
         QApplication.quit()
         
-
-    def clicButton_JSON_XCI(self):
-        """Callback to select which is the option JSON or XCI.
-        """
-        self.json_option = not self.json_option
-        if self.json_option == True:
-            self.ui.pushButton_Search_XCI.setEnabled(False)
-            self.ui.pushButton_Search_JSON.setEnabled(True)
-            self.ui.lineEdit_JSON.setEnabled(True)
-            self.ui.lineEdit_XCI.setEnabled(False)
-        else:
-            self.ui.pushButton_Search_XCI.setEnabled(True)
-            self.ui.pushButton_Search_JSON.setEnabled(False)
-            self.ui.lineEdit_JSON.setEnabled(False)
-            self.ui.lineEdit_XCI.setEnabled(True)
 
