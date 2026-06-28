@@ -1,7 +1,7 @@
 
 class vio:
     """Class to generate the clock wizard.
-
+ 
     """
     LIBRARIES = """
 library ieee;         
