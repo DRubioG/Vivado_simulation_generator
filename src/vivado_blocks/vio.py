@@ -43,6 +43,7 @@ use ieee.std_logic_1164.all;
 
       data = "\n\nentity " + json_file["ip_inst"]["xci_name"] + " is\n\tport ("
 
+      # Gets the ports
       self.in_ports, self.out_ports = self.get_ports(json_file)
       cont = 0
 
@@ -83,24 +84,25 @@ use ieee.std_logic_1164.all;
       Returns:
           array: array with two arrays. One for the input and the other for the output.
       """
-      boundary =  data["ip_inst"]["boundary"]["ports"]
+      ports =  data["ip_inst"]["boundary"]["ports"]
       
       in_ports = []
       out_ports = []
       cont = 0
 
-      for i in boundary:
-        if boundary[i][0]["direction"] == "in":
+    # This generates the ports
+      for i in ports:
+        if ports[i][0]["direction"] == "in":
           # Add to the input array
           
           if i == "clk":
                 in_ports.append([i, '0'])
           else:
-                in_ports.append([i, boundary[i][0]["size_left"]])
+                in_ports.append([i, ports[i][0]["size_left"]])
                    
         else:
           # Add to the output array
-          out_ports.append([i, boundary[i][0]["size_left"]])
+          out_ports.append([i, ports[i][0]["size_left"]])
 
         cont += 1
       # Return the arrays
@@ -129,28 +131,29 @@ use ieee.std_logic_1164.all;
 
       data += "\n\n\n"
 
+      # Assign the value
       for i in range(num):
         probe = "C_PROBE_OUT" + str(i) + "_INIT_VAL"
         value = json_file["ip_inst"]["parameters"]["model_parameters"][probe][0]["value"]
 
 
-
-
+        # converts the value to integer
         val = int(value, 16)
 
+
+        # this is the port
         data += "\n\t" + self.out_ports[i][0] + " <= "
 
+        # if the value is 0
         if val == 0:
            if self.out_ports[i][1] == '0':
               data += "\'0\';"
            else:
               data += "(others=>'0');"
             
-
         else:
+        # if the value is different to 0
             data += "\"" + bin(val)[2:].zfill(int(self.out_ports[i][1])+1) + "\";"
-
-
 
       data += "\n\n\nend architecture;"
 
