@@ -1,6 +1,7 @@
 import os
 from vivado_blocks.clk_wizard import *
 from vivado_blocks.ila import *
+from vivado_blocks.vio import *
 
 
 class simulator_generator:
@@ -11,6 +12,7 @@ class simulator_generator:
         """
         self.clk_wiz = clk_wizard()
         self.ila = ila()
+        self.vio = vio()
         self.sim_folder = True
         pass
 
@@ -26,6 +28,8 @@ class simulator_generator:
             self.generate_clocking_wizard(json_file)
         elif json_file["ip_inst"]["component_reference"].find("ila") != -1:
             self.generate_ila(json_file)
+        elif json_file["ip_inst"]["component_reference"].find("vio") != -1:
+            self.generate_vio(json_file)
 
 
 
@@ -33,7 +37,7 @@ class simulator_generator:
         """This method calls the clocking wizard class to generate the file.
 
         Args:
-            json_file (array): array wuth the JSON data.
+            json_file (array): array with the JSON data.
         """
         name = json_file["ip_inst"]["xci_name"]
         if self.sim_folder:
@@ -48,6 +52,23 @@ class simulator_generator:
 
 
 # Vio
+
+    def generate_vio(self, json_file):
+        """This method calls the vio class to generate the file.
+
+        Args:
+            json_file (array): array with the JSON data.
+        """
+        name = json_file["ip_inst"]["xci_name"]
+        if self.sim_folder:
+            os.makedirs("sim", exist_ok=True)
+            file = open("sim/"+name+".vhd", "w")
+        else:
+            file = open(name+".vhd", "w")
+
+        vio_data = self.vio.generate_vio_file(json_file)
+        file.write(vio_data) 
+        file.close()
 
 
 # Ila
