@@ -1,6 +1,6 @@
+import os
 from vivado_blocks.clk_wizard import *
 from vivado_blocks.ila import *
-import os
 
 
 class simulator_generator:
