@@ -2,6 +2,7 @@ import os
 from vivado_blocks.clk_wizard import *
 from vivado_blocks.ila import *
 from vivado_blocks.vio import *
+from vivado_blocks.block_memory_generator import *
 
 
 class simulator_generator:
@@ -13,6 +14,7 @@ class simulator_generator:
         self.clk_wiz = clk_wizard()
         self.ila = ila()
         self.vio = vio()
+        self.block_memory_generator = block_memory_generator()
         self.sim_folder = True
         pass
 
@@ -30,6 +32,8 @@ class simulator_generator:
             self.generate_ila(json_file)
         elif json_file["ip_inst"]["component_reference"].find("vio") != -1:
             self.generate_vio(json_file)
+        elif json_file["ip_inst"]["component_reference"].find("blk_mem_gen") != -1:
+            self.generate_block_memory_generator(json_file)
 
 
 
@@ -93,6 +97,23 @@ class simulator_generator:
 
 
 # block memory generator
+
+    def generate_block_memory_generator(self, json_file):
+        """This method generates the block memory generator simulation file
+
+        Args:
+            json_file (array): array with the jSON data.
+        """
+        name = json_file["ip_inst"]["xci_name"]
+        if self.sim_folder:
+            os.makedirs("sim", exist_ok=True)
+            file = open("sim/"+name+".vhd", "w")
+        else:
+            file = open(name+".vhd", "w")
+
+        block_memory_generator_data = self.block_memory_generator.generate_block_memory_generator_file(json_file)
+        file.write(block_memory_generator_data) 
+        file.close()
 
 
 
