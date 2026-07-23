@@ -7,9 +7,9 @@ use ieee.numeric_std.all;
 entity blk_mem_gen_0 is
 	port (
 		douta : out std_logic_vector(31 downto 0);
-		rsta_busy : out std_logic;
 		clka : in std_logic;
 		rsta : in std_logic;
+		regcea : in std_logic;
 		wea : in std_logic_vector(3 downto 0);
 		addra : in std_logic_vector(31 downto 0);
 		dina : in std_logic_vector(31 downto 0)

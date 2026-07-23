@@ -26,6 +26,11 @@ use ieee.numeric_std.all;
 		self.rst_value = json_file["ip_inst"]["parameters"]["component_parameters"]["Use_RSTA_Pin"][0]["value"] == "true"
 		self.depth = json_file["ip_inst"]["parameters"]["component_parameters"]["Write_Width_A"][0]["value"]
 		self.write_first = json_file["ip_inst"]["parameters"]["component_parameters"]["Operating_Mode_A"][0]["value"]
+		self.common_clock = json_file["ip_inst"]["parameters"]["model_parameters"]["C_COMMON_CLK"][0]["value"]
+		self.fill_memory = json_file["ip_inst"]["parameters"]["component_parameters"]["Fill_Remaining_Memory_Locations"][0]["value"]
+		self.fill_value = json_file["ip_inst"]["parameters"]["component_parameters"]["Remaining_Memory_Locations"][0]["value"]
+		self.load_init_file = json_file["ip_inst"]["parameters"]["component_parameters"]["Load_Init_File"][0]["value"]
+		self.coe_file_path = json_file["ip_inst"]["parameters"]["component_parameters"]["Coe_File"][0]["value"]
 
 		
 	  # Add libraries
