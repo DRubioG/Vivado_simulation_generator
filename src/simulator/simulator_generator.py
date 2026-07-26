@@ -117,13 +117,6 @@ class simulator_generator:
 
 
 
-# concat
-
-
-
-# constant
-
-
 
 # Binary counter
 
