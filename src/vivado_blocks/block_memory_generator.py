@@ -31,6 +31,8 @@ use ieee.numeric_std.all;
 		self.fill_value = json_file["ip_inst"]["parameters"]["component_parameters"]["Remaining_Memory_Locations"][0]["value"]
 		self.load_init_file = json_file["ip_inst"]["parameters"]["component_parameters"]["Load_Init_File"][0]["value"]
 		self.coe_file_path = json_file["ip_inst"]["parameters"]["component_parameters"]["Coe_File"][0]["value"]
+		self.regcea = json_file["ip_inst"]["parameters"]["component_parameters"]["Use_REGCEA_Pin"][0]["value"]
+		self.regceb = json_file["ip_inst"]["parameters"]["component_parameters"]["Use_REGCEB_Pin"][0]["value"]
 
 		
 	  # Add libraries
@@ -141,19 +143,20 @@ use ieee.numeric_std.all;
 		"""
 		data = "\n\narchitecture arch_" + json_file["ip_inst"]["xci_name"] + " of "+ json_file["ip_inst"]["xci_name"] +" is\n\n" 
 	  
-		data += self.generate_signals(json_file=json_file)
+		data += self.generate_signals()
 	  
 		data += "\n\nbegin\n\n"
 
 		data += """\nassert false\nreport "Don't use this file in synthesis"\nseverity error;"""
 	  
 
-		for i in self.in_ports:
-			if i[0].find("rsta") != -1:
-				data += self.generate_reset()
-				break
+		for i in self.out_ports:
+			if i[0].find("rsta_busy") != -1:
+				data += self.generate_reset_A()
+			elif i[0].find("rstb_busy")!=-1:
+				data += self.generate_reset_B()
 
-		data += self.generate_process(json_file)
+		data += self.generate_process()
 	  
 		data += "\nend architecture;"
 
@@ -161,7 +164,7 @@ use ieee.numeric_std.all;
 		return data
 	
 
-	def generate_signals(self, json_file):
+	def generate_signals(self):
 		"""Method to generate the signals.
 
 		Args:
@@ -175,7 +178,6 @@ use ieee.numeric_std.all;
 			if i[0] == "dina":
 				addr_width = i[1]
 				break
-		
 
 		data = "\n\ttype ram_type is array (0 to " + self.depth + "-1)"
 		data += "\n\t\tof std_logic_vector(" + addr_width + " downto 0);"
@@ -184,13 +186,23 @@ use ieee.numeric_std.all;
 			data += "\n\tsignal RAM : ram_type := (others => (others => '0'));"
 		else:
 			data += "\n\tsignal ROM : ram_type := (others => (others => '0'));"
+			# if self.coe_file_path:
+		# self.get_COE_data()
 
-		if self.write_first == "WRITE_FIRST":
-			data += "\n\tsignal ram_d : std_logic_vector(31 downto 0);"
+		# if self.memory_type != "Single_Port_RAM" or self.en_32address:
+		data += "\n\tsignal ram_d : std_logic_vector(31 downto 0);"
 
 		return data
+
+	def get_COE_data(self): 
+		file = open(self.coe_file_path, 'r')
+		for i in file.readlines():
+			print(i)
+
+
+
 	
-	def generate_reset(self):
+	def generate_reset_A(self):
 		"""This method returns the output reset of the port A
 
 		Returns:
@@ -200,9 +212,9 @@ use ieee.numeric_std.all;
 		data = "\n\n"
 		data += "\n\tprocess begin"
 		data += "\n\t\trsta_busy <= '0';"
-		data += "\n\t\twait until rising_edge(clka);"
+		data += "\n\t\twait until rsta = '1';"
 		data += "\n\t\trsta_busy <= '1';"
-		data += "\n\t\twait for 40 ns;"
+		data += "\n\t\twait until rsta = '0';"
 		data += "\n\t\tfor i in 0 to 2 loop"
 		data += "\n\t\twait until rising_edge(clka);"
 		data += "\n\t\tend loop;"
@@ -210,9 +222,29 @@ use ieee.numeric_std.all;
 		data += "\n\t\twait;"
 		data += "\n\tend process;"
 		return data
-
 	
-	def generate_process(self, json_file):
+	def generate_reset_B(self):
+		"""This method returns the output reset of the port B
+
+		Returns:
+			string: string with the output reset data.
+		"""
+
+		data = "\n\n"
+		data += "\n\tprocess begin"
+		data += "\n\t\trstb_busy <= '0';"
+		data += "\n\t\twait until rstb = '1';"
+		data += "\n\t\trstb_busy <= '1';"
+		data += "\n\t\twait until rstb = '0';"
+		data += "\n\t\tfor i in 0 to 2 loop"
+		data += "\n\t\twait until rising_edge(clkb);"
+		data += "\n\t\tend loop;"
+		data += "\n\t\trstb_busy <= '0';"
+		data += "\n\t\twait;"
+		data += "\n\tend process;"
+		return data
+	
+	def generate_process(self):
 		"""Method to generate the process.
 
 		Args:
@@ -225,103 +257,98 @@ use ieee.numeric_std.all;
 		# Single_Port_RAM
 		if self.memory_type == "Single_Port_RAM":
 			if not self.en_32address:
-				data += "\n\n\n\tdouta <= ram(to_integer(unsigned(addra)));"
+				data += "\n\n\n\tdouta <= ram_d;"
 				data += "\n\tprocess(clka)"
+				data += "\n\t\tvariable addr : integer;"
 				data += "\n\tbegin"
 				data += "\n\t\tif rising_edge(clka) then"
-				data += "\n\t\t\tif ena = '1' then"
+				
+				if self.rst_value:
+					data += "\n\t\t\tif rsta = '1' then"
+					data += "\n\t\t\t\taddr := 0;"
+					data += "\n\t\t\t\tram_d <= (others => '0');"
+					data += "\n\t\t\telse"
+					
+					data += "\n\t\t\t\taddr := to_integer(unsigned(addra));"
+				
+				if not self.enable:
+					data += "\n\t\t\tif ena = '1' then"
+
+				
+				if self.regcea:
+					data += "\n\t\t\tif regcea = '1' then"
+
 				data += "\n\t\t\t\tif wea = '1' then"
 				data += "\n\t\t\t\t\tRAM(to_integer(unsigned(addra))) <= dina;"
+				data += "\n\t\t\t\tram_d <= RAM(to_integer(unsigned(addra)));"
 				data += "\n\t\t\t\tend if;"
-				data += "\n\t\t\tend if;"
+
+				if self.regcea:
+					data += "\n\t\t\telse"
+					data += "\n\t\t\t\tram_d <= (others=>'0');"
+					data += "\n\t\t\tend if;"
+
+				if not self.enable:
+					data += "\n\t\t\tend if;"
+
+				if self.rst_value:
+					data += "\n\t\t\tend if;"
+
 				data += "\n\t\tend if;"
 				data += "\n\tend process;"
 				data += "\n\n"
 			else:
 
-				if self.memory_format == "WRITE_FIRST":
-				## WRITE FIRST
-					data += """\n\n
-	process (clka)
-		variable addr : integer;
-	begin
-		if rising_edge(clka) then"""
+				data += "\n\n\n\tprocess (clka)"
+				data += "\n\t\tvariable addr : integer;"
+				data += "\n\tbegin"
+				data += "\n\t\tif rising_edge(clka) then"
+				
+				if self.rst_value:
+					data += "\n\t\t\tif rsta = '1' then"
+					data += "\n\t\t\t\taddr := 0;"
+					data += "\n\t\t\t\tram_d <= (others => '0');"
+					data += "\n\t\t\telse"
 					
-					if self.rst_value:
-						data += """
-			if rsta = '1' then
-				addr := 0;
-			else"""
-						
-						data += """
-				addr := to_integer(unsigned(addra));"""
-					
-					if not self.enable:
-						data += "\n\t\t\tif ena = '1' then"
+				if not self.enable:
+					data += "\n\t\t\tif ena = '1' then"
 
-					data += """
-					if wea /= "0000" then
-						RAM(addr) <= dina;
-						ram_d <= dina;
-					else
-						ram_d <= RAM(addr);
-					end if;"""
-
-					if not self.enable:
-						data += "\n\t\t\tend if;"
-
-					if self.rst_value:
-						data += """
-			end if;"""
-
-					data += """
-		end if;
-	end process;
-
-
-	process (clka)
-	begin
-		if rising_edge(clka) then
-			douta <= ram_d;
-		end if;
-	end process;"""
 				
-				elif self.memory_format == "READ_FIRST":
-				## READ FIRST
-				
-					data += """\n\n
-	process(clka)
-		variable addr : integer;
-	begin
-		if rising_edge(clka) then
-			addr := to_integer(unsigned(addra));
-			if ena='1' then
-				douta <= RAM(addr);
-				if wea /= "0000" then
-					RAM(addr) <= dina;
-				end if;
-			end if;
-		end if;
-	end process;"""
-				
-				else:
-				## NO CHANGE
-					data += """\n\n
-	process(clka)
-		variable addr : integer;
-	begin
-		if rising_edge(clka) then
-			addr := to_integer(unsigned(addra));
-			if ena='1' then
-				if wea /= "0000" then
-					RAM(addr) <= dina;
-				else
-					douta <= RAM(addr);
-				end if;
-			end if;
-		end if;
-	end process;"""
+				if self.regcea:
+					data += "\n\t\t\tif regcea = '1' then"
 
+				data += "\n\t\t\t\taddr := to_integer(unsigned(addra));"
+				data += "\n\t\t\t\t\tif wea /= \"0000\" then"
+				data += "\n\t\t\t\t\t\tRAM(addr) <= dina;"
+				data += "\n\t\t\t\t\t\tram_d <= dina;"
+				data += "\n\t\t\t\t\telse"
+				data += "\n\t\t\t\t\t\tram_d <= RAM(addr);"
+				data += "\n\t\t\t\t\tend if;"
+
+				if self.regcea:
+					data += "\n\t\t\telse"
+					data += "\n\t\t\t\tram_d <= (others=>'0');"
+					data += "\n\t\t\tend if;"
+
+
+				if not self.enable:
+					data += "\n\t\t\tend if;"
+
+				
+
+
+				if self.rst_value:
+					data += "\n\t\t\tend if;"
+
+				data += "\n\t\tend if;"
+				data += "\n\tend process;"
+				data += "\n\n\tprocess (clka)"
+				data += "\n\tbegin"
+				data += "\n\t\tif rising_edge(clka) then"
+				data += "\n\t\t\tdouta <= ram_d;"
+				data += "\n\t\tend if;"
+				data += "\n\tend process;"
+				
 
 		
 		# Simple_Dual_Port_RAM

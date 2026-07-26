@@ -120,10 +120,13 @@ class simulator_generator:
 # concat
 
 
+
 # constant
 
 
+
 # Binary counter
+
 
 
 # Distributed Memory Generator
@@ -133,28 +136,42 @@ class simulator_generator:
 # oddr
 
 
+
 # RAM-based shift register
+
 
 
 # Slice
 
+
+
 # Utility idelay Control
+
 
 
 # Utility buffer
 
+
+
 # Utility Reduced Logic
 
+
+
 # Utitlity Vector Logic
+
 
 
 # DDS Compiler
 
 
+
 # xpm_cdc
 
 
+
 # adder/substracter
+
+
 
 # cordic
 
@@ -163,14 +180,15 @@ class simulator_generator:
 # Divider Generator
 
 
+
 # Floating-Point
+
+
 
 # Multiplier
 
 
 
-
 # JESD204
-
 
 
