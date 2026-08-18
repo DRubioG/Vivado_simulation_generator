@@ -2,6 +2,7 @@ import os
 from vivado_blocks.clk_wizard import *
 from vivado_blocks.ila import *
 from vivado_blocks.vio import *
+from vivado_blocks.binary_counter import *
 
 
 class simulator_generator:
@@ -13,6 +14,7 @@ class simulator_generator:
         self.clk_wiz = clk_wizard()
         self.ila = ila()
         self.vio = vio()
+        self.binary_counter = Binary_counter()
         self.sim_folder = True
         pass
 
@@ -30,6 +32,8 @@ class simulator_generator:
             self.generate_ila(json_file)
         elif json_file["ip_inst"]["component_reference"].find("vio") != -1:
             self.generate_vio(json_file)
+        elif json_file["ip_inst"]["component_reference"].find("counter_binary") != -1:
+            self.generate_binary_counter(json_file)
 
 
 
@@ -103,6 +107,24 @@ class simulator_generator:
 
 
 # Binary counter
+
+    def generate_binary_counter(self, json_file):
+        """This method generates the binary counter simulation file
+
+        Args:
+            json_file (array): array with the jSON data.
+        """
+        name = json_file["ip_inst"]["xci_name"]
+        if self.sim_folder:
+            os.makedirs("sim", exist_ok=True)
+            file = open("sim/"+name+".vhd", "w")
+        else:
+            file = open(name+".vhd", "w")
+
+        data = self.binary_counter.generate_binary_counter_file(json_file)
+        file.write(data) 
+        file.close()
+
 
 
 # Distributed Memory Generator

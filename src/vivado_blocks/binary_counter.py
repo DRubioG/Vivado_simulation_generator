@@ -1,5 +1,6 @@
 
-class vio:
+
+class Binary_counter:
     """Class to generate the VIO file.
  
     """
@@ -7,8 +8,7 @@ class vio:
 library ieee;         
 use ieee.std_logic_1164.all;
 """
-
-    def generate_vio_file(self, json_file):
+    def generate_binary_counter_file(self, json_file):
       """This method generates the output file.
 
       Args:
@@ -30,6 +30,7 @@ use ieee.std_logic_1164.all;
       # Return data
       return data
     
+
 
     def generate_entity(self, json_file):
       """This method generates the entity information.
@@ -72,9 +73,8 @@ use ieee.std_logic_1164.all;
           
       # Return data
       return data
+
     
-
-
     def get_ports(self, data):
       """This method returns the input and output ports.
 
@@ -95,7 +95,7 @@ use ieee.std_logic_1164.all;
         if ports[i][0]["direction"] == "in":
           # Add to the input array
           
-          if i == "clk":
+          if i.lower() == "clk":
                 in_ports.append([i, '0'])
           else:
                 in_ports.append([i, ports[i][0]["size_left"]])
@@ -109,7 +109,7 @@ use ieee.std_logic_1164.all;
       return in_ports, out_ports
 
 
-
+    
     def generate_architecture(self, json_file):
       """Method with the architecture information.
 
@@ -126,35 +126,7 @@ use ieee.std_logic_1164.all;
 
       data += """\nassert false\nreport "Don't use this file in synthesis"\nseverity error;"""
     
-      num = int(json_file["ip_inst"]["parameters"]["component_parameters"]["C_NUM_PROBE_OUT"][0]["value"])
-
-
-      data += "\n\n\n"
-
-      # Assign the value
-      for i in range(num):
-        probe = "C_PROBE_OUT" + str(i) + "_INIT_VAL"
-        value = json_file["ip_inst"]["parameters"]["model_parameters"][probe][0]["value"]
-
-
-        # converts the value to integer
-        val = int(value, 16)
-
-
-        # this is the port
-        data += "\n\t" + self.out_ports[i][0] + " <= "
-
-        # if the value is 0
-        if val == 0:
-           if self.out_ports[i][1] == '0':
-              data += "\'0\';"
-           else:
-              data += "(others=>'0');"
-            
-        else:
-        # if the value is different to 0
-            data += "\"" + bin(val)[2:].zfill(int(self.out_ports[i][1])+1) + "\";"
-
+      
       data += "\n\n\nend architecture;"
 
       # Return data
