@@ -4,4 +4,7 @@
 ![Vivado simulator](/img/vivado_simulation_generator.png)
 
 ## IP block generation
- - Clock wizard _(basic configuration)_
+ - Clock wizard 
+ - ILA 
+ - VIO 
+ - Binary counter
