@@ -3,6 +3,7 @@ from vivado_blocks.clk_wizard import *
 from vivado_blocks.ila import *
 from vivado_blocks.vio import *
 from vivado_blocks.binary_counter import *
+from vivado_blocks.multiplier import *
 
 
 class simulator_generator:
@@ -15,6 +16,7 @@ class simulator_generator:
         self.ila = ila()
         self.vio = vio()
         self.binary_counter = Binary_counter()
+        self.multiplier = Multiplier()
         self.sim_folder = True
         pass
 
@@ -34,6 +36,8 @@ class simulator_generator:
             self.generate_vio(json_file)
         elif json_file["ip_inst"]["component_reference"].find("counter_binary") != -1:
             self.generate_binary_counter(json_file)
+        elif json_file["ip_inst"]["component_reference"].find("mult_gen") != -1:
+            self.generate_multiplier(json_file)
 
 
 
@@ -169,6 +173,22 @@ class simulator_generator:
 # Multiplier
 
 
+    def generate_multiplier(self, json_file):
+        """This method generates the multiplier simulation file
+
+        Args:
+            json_file (array): array with the JSON data.
+        """
+        name = json_file["ip_inst"]["xci_name"]
+        if self.sim_folder:
+            os.makedirs("sim", exist_ok=True)
+            file = open("sim/"+name+".vhd", "w")
+        else:
+            file = open(name+".vhd", "w")
+
+        data = self.multiplier.generate_multiplier(json_file)
+        file.write(data) 
+        file.close()
 
 
 # JESD204

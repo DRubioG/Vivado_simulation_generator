@@ -1,7 +1,7 @@
-nvc -a c_counter_binary_0.vhd
+nvc -a mult_gen_0.vhd
 
-nvc -a test_binary_counter.vhd
+nvc -a test_mul.vhd
 
-nvc -e test_binary_counter
+nvc -e mult_gen_0_tb
 
-nvc -r test_binary_counter --stop-time=1us --wave=test_binary_counter.vcd
+nvc -r mult_gen_0_tb --stop-time=1us --wave=mult_gen_0_tb.vcd
