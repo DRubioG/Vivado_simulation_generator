@@ -133,12 +133,14 @@ use ieee.numeric_std.all;
       """
       data = "\n\narchitecture arch_" + json_file["ip_inst"]["xci_name"] + " of "+ json_file["ip_inst"]["xci_name"] +" is" 
 
+      # Signals
       data += "\n\tsignal r_cont : unsigned(Q'range) := (others=>'0');"
 
       
       # Constant assignation
       data += "\n\nbegin\n\n"
 
+      # Safety report
       data += """\nassert false\nreport "Don't use this file in synthesis"\nseverity error;"""
 
       data += """
@@ -147,13 +149,17 @@ use ieee.numeric_std.all;
   \n\n\tprocess (clk)
   begin
     if rising_edge(clk) then"""
+      
+      # Synchronous Clear (SCLR)
       if self.sclr_enable:
         data += "\nif SCLR = '0' then"
-      
+
+      # Clock Enable (CE)
       if self.ce_enable:
          data += "\nif CE = '1' then"
 
       data += """\nr_cont <= r_cont """
+      # Count mode
       if self.direction == "UP":
          data += "+"
       else:
@@ -161,10 +167,11 @@ use ieee.numeric_std.all;
 
       data += """ x\"""" + self.increment + """\";"""
 
-
+      # Clock Enable (CE)
       if self.ce_enable:
          data += "\nend if;"
 
+      # Synchronous Clear (SCLR)
       if self.sclr_enable:
          data += """
       else
@@ -174,6 +181,7 @@ use ieee.numeric_std.all;
       data += """\nend if;
   end process;"""
 
+      # Sync Threshold Output
       if self.sync_threshold:
          data += 	"\n\n\tTHRESH0 <= '1' when r_cont = x\"" + self.threshold_value + "\" else '0';"
       
