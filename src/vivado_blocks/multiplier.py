@@ -22,6 +22,8 @@ use ieee.numeric_std.all;
       self.width_low = json_file["ip_inst"]["parameters"]["component_parameters"]["OutputWidthLow"][0]["value"]
       self.ce_enable = json_file["ip_inst"]["parameters"]["component_parameters"]["ClockEnable"][0]["value"] == "true"
       self.sclr_enable = json_file["ip_inst"]["parameters"]["component_parameters"]["SyncClear"][0]["value"] == "true"
+      self.ce_priority = json_file["ip_inst"]["parameters"]["component_parameters"]["SclrCePriority"][0]["value"] == "SCLR_Overrides_CE"
+
      
       # Add libraries
       data = self.LIBRARIES
@@ -149,28 +151,54 @@ process(clk)
 begin
 	if rising_edge(CLK) then"""
 
-      # Synchronous Clear (SCLR)
-      if self.sclr_enable:
-        data += "\nif SCLR = '0' then"
 
-      # Clock Enable (CE)
-      if self.ce_enable:
-        data += "\nif CE = '1' then"
+      if self.ce_priority:
+        # Synchronous Clear (SCLR)
+        if self.sclr_enable:
+          data += "\nif SCLR = '0' then"
+
+        # Clock Enable (CE)
+        if self.ce_enable:
+          data += "\nif CE = '1' then"
+
+      else:
+        # Clock Enable (CE)
+        if self.ce_enable:
+          data += "\nif CE = '1' then"
+
+        # Synchronous Clear (SCLR)
+        if self.sclr_enable:
+          data += "\nif SCLR = '0' then"
+
     
       
       data += "\nP_aux <= std_logic_vector(unsigned(A)*unsigned(B));"
 
-          
-      # Clock Enable (CE)
-      if self.ce_enable:
-         data += "\nend if;"
 
-      # Synchronous Clear (SCLR)
-      if self.sclr_enable:
-         data += """
-      else
-        P_aux <= (others => '0');
-      end if;"""
+      if self.ce_priority:
+        # Clock Enable (CE)
+        if self.ce_enable:
+            data += "\nend if;"
+
+        # Synchronous Clear (SCLR)
+        if self.sclr_enable:
+            data += """
+        else
+          P_aux <= (others => '0');
+        end if;"""
+
+      else:
+        # Synchronous Clear (SCLR)
+        if self.sclr_enable:
+            data += """
+        else
+          P_aux <= (others => '0');
+        end if;"""
+        
+        # Clock Enable (CE)
+        if self.ce_enable:
+            data += "\nend if;"
+        
          
       data += """
 	end if;

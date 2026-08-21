@@ -25,12 +25,12 @@ begin
   process (clk)
   begin
     if rising_edge(CLK) then
-      if SCLR = '0' then
-        if CE = '1' then
+      if CE = '1' then
+        if SCLR = '0' then
           P_aux <= std_logic_vector(unsigned(A) * unsigned(B));
+        else
+          P_aux <= (others => '0');
         end if;
-      else
-        P_aux <= (others => '0');
       end if;
     end if;
   end process;
