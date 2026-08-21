@@ -104,12 +104,6 @@ class simulator_generator:
 
 
 
-# concat
-
-
-# constant
-
-
 # Binary counter
 
     def generate_binary_counter(self, json_file):
@@ -141,22 +135,8 @@ class simulator_generator:
 # RAM-based shift register
 
 
-# Slice
-
-# Utility idelay Control
-
-
-# Utility buffer
-
-# Utility Reduced Logic
-
-# Utitlity Vector Logic
-
-
 # DDS Compiler
 
-
-# xpm_cdc
 
 
 # adder/substracter
@@ -174,7 +154,7 @@ class simulator_generator:
 
 
     def generate_multiplier(self, json_file):
-        """This method generates the multiplier simulation file
+        """This method generates the multiplier simulation file.
 
         Args:
             json_file (array): array with the JSON data.
@@ -190,8 +170,6 @@ class simulator_generator:
         file.write(data) 
         file.close()
 
-
-# JESD204
 
 
 

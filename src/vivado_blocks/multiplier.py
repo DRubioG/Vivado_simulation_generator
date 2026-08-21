@@ -7,6 +7,7 @@ class Multiplier:
 library ieee;         
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+
 """
     def generate_multiplier(self, json_file):
       """This method generates the output file.
@@ -129,6 +130,7 @@ use ieee.numeric_std.all;
       Returns:
           string: string with the architecture of the clocking wizard.
       """
+      # Architecture start
       data = "\n\narchitecture arch_" + json_file["ip_inst"]["xci_name"] + " of "+ json_file["ip_inst"]["xci_name"] +" is" 
 
       # Signals
@@ -142,6 +144,7 @@ use ieee.numeric_std.all;
       data += """\nassert false\nreport "Don't use this file in synthesis"\nseverity error;"""
 
       data += "\n\n\tP <= P_aux"
+      # Slice data
       if self.output_width:
         data += "(" + self.width_high + " downto " + self.width_low + ")"
       data += ";"
@@ -170,8 +173,7 @@ begin
         if self.sclr_enable:
           data += "\nif SCLR = '0' then"
 
-    
-      
+      # Multiplier
       data += "\nP_aux <= std_logic_vector(unsigned(A)*unsigned(B));"
 
 
@@ -203,41 +205,6 @@ begin
       data += """
 	end if;
 end process;"""
-      
-#       # Synchronous Clear (SCLR)
-#       if self.sclr_enable:
-#         data += "\nif SCLR = '0' then"
-
-#       # Clock Enable (CE)
-#       if self.ce_enable:
-#          data += "\nif CE = '1' then"
-
-#       data += """\nr_cont <= r_cont """
-#       # Count mode
-#       if self.direction == "UP":
-#          data += "+"
-#       else:
-#          data += "-"
-
-#       data += """ x\"""" + self.increment + """\";"""
-
-#       # Clock Enable (CE)
-#       if self.ce_enable:
-#          data += "\nend if;"
-
-#       # Synchronous Clear (SCLR)
-#       if self.sclr_enable:
-#          data += """
-#       else
-#         r_cont <= (others => '0');
-#       end if;"""
-
-#       data += """\nend if;
-#   end process;"""
-
-#       # Sync Threshold Output
-#       if self.sync_threshold:
-#          data += 	"\n\n\tTHRESH0 <= '1' when r_cont = x\"" + self.threshold_value + "\" else '0';"
       
       data += "\n\nend architecture;"
 
