@@ -17,7 +17,12 @@ use ieee.numeric_std.all;
       Returns:
           string: file data.
       """
-      
+      self.output_width = json_file["ip_inst"]["parameters"]["component_parameters"]["Use_Custom_Output_Width"][0]["value"] == "true"
+      self.width_high = json_file["ip_inst"]["parameters"]["component_parameters"]["OutputWidthHigh"][0]["value"]
+      self.width_low = json_file["ip_inst"]["parameters"]["component_parameters"]["OutputWidthLow"][0]["value"]
+      self.ce_enable = json_file["ip_inst"]["parameters"]["component_parameters"]["ClockEnable"][0]["value"] == "true"
+      self.sclr_enable = json_file["ip_inst"]["parameters"]["component_parameters"]["SyncClear"][0]["value"] == "true"
+     
       # Add libraries
       data = self.LIBRARIES
 
@@ -125,7 +130,7 @@ use ieee.numeric_std.all;
       data = "\n\narchitecture arch_" + json_file["ip_inst"]["xci_name"] + " of "+ json_file["ip_inst"]["xci_name"] +" is" 
 
       # Signals
-    #   data += "\n\tsignal r_cont : unsigned(Q'range) := (others=>'0');"
+      data += "\n\tsignal P_aux : std_logic_vector(A'length+B'length-1 downto 0);"
 
       
       # Constant assignation
@@ -134,12 +139,42 @@ use ieee.numeric_std.all;
       # Safety report
       data += """\nassert false\nreport "Don't use this file in synthesis"\nseverity error;"""
 
-#       data += """
+      data += "\n\n\tP <= P_aux"
+      if self.output_width:
+        data += "(" + self.width_high + " downto " + self.width_low + ")"
+      data += ";"
 
-#   Q <= std_logic_vector(r_cont);
-#   \n\n\tprocess (clk)
-#   begin
-#     if rising_edge(clk) then"""
+      data += """\n
+process(clk)
+begin
+	if rising_edge(CLK) then"""
+
+      # Synchronous Clear (SCLR)
+      if self.sclr_enable:
+        data += "\nif SCLR = '0' then"
+
+      # Clock Enable (CE)
+      if self.ce_enable:
+        data += "\nif CE = '1' then"
+    
+      
+      data += "\nP_aux <= std_logic_vector(unsigned(A)*unsigned(B));"
+
+          
+      # Clock Enable (CE)
+      if self.ce_enable:
+         data += "\nend if;"
+
+      # Synchronous Clear (SCLR)
+      if self.sclr_enable:
+         data += """
+      else
+        P_aux <= (others => '0');
+      end if;"""
+         
+      data += """
+	end if;
+end process;"""
       
 #       # Synchronous Clear (SCLR)
 #       if self.sclr_enable:
