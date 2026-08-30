@@ -149,10 +149,7 @@ use ieee.numeric_std.all;
         data += "(" + self.width_high + " downto " + self.width_low + ")"
       data += ";"
 
-      data += """\n
-process(clk)
-begin
-	if rising_edge(CLK) then"""
+      data += "\n\nprocess(clk)\nbegin\n\tif rising_edge(CLK) then"
 
 
       if self.ce_priority:
@@ -184,27 +181,19 @@ begin
 
         # Synchronous Clear (SCLR)
         if self.sclr_enable:
-            data += """
-        else
-          P_aux <= (others => '0');
-        end if;"""
+            data += "\n\t\t\t\telse\n\t\t\t\t\tP_aux <= (others => '0');\n\t\t\t\tend if;"
 
       else:
         # Synchronous Clear (SCLR)
         if self.sclr_enable:
-            data += """
-        else
-          P_aux <= (others => '0');
-        end if;"""
+            data += "\n\t\t\t\telse\n\t\t\t\t\tP_aux <= (others => '0');\n\t\t\t\tend if;"
         
         # Clock Enable (CE)
         if self.ce_enable:
             data += "\nend if;"
         
          
-      data += """
-	end if;
-end process;"""
+      data += "\n\t\nend if;end process;"
       
       data += "\n\nend architecture;"
 
