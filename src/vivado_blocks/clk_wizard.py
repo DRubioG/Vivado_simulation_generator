@@ -1,3 +1,4 @@
+from vivado_blocks.common_functions import *
 
 class clk_wizard:
     """Class to generate the clock wizard.
@@ -26,7 +27,7 @@ use ieee.std_logic_1164.all;
       self.num_freqs = int(json_file["ip_inst"]["parameters"]["component_parameters"]["NUM_OUT_CLKS"][0]["value"])
 
       # Add entity
-      data += self.generate_entity(json_file)
+      data += generate_entity(json_file)
 
       # Add architecture
       data += self.generate_architecture(json_file)
